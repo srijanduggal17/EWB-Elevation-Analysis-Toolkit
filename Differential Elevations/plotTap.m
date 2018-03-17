@@ -1,9 +1,9 @@
-function [latIndicies, longIndicies, elevations] = plotTap(latArr, longArr, sortedElevationData, choice)
+function [] = plotTap(filename, latArr, longArr, sortedElevationData, choice, boollabel, color, symbol)
 figure(gcf)
 
 % hold on
 
-[~,~,raw] = xlsread('MPDD.xlsx');
+[~,~,raw] = xlsread(filename);
 [rows, ~] = size(raw);
 
 choice = upper(choice);
@@ -57,13 +57,18 @@ switch choice
         error('Please enter a valid choice option (''DMS'' or ''DD'')');
 end
 
+scatter3(longIndicies, latIndicies, elevations, 150, color, 'filled');
 
-
-scatter3(longIndicies, latIndicies, elevations, 150, 'red', 'filled');
-scatter3(longIndicies, latIndicies, elevations + pointLableHeight, 150, 'red', 'filled');
-
-for i = 1:length(longIndicies)
-    text(longIndicies(i) + labelOffset, latIndicies(i), elevations(i) + 15, [label(i) [num2str(elevations(i),4) 'm']], 'fontsize', 14, 'color', 'black', 'BackgroundColor', 'white', 'EdgeColor', 'black');
-    line([longIndicies(i), longIndicies(i)],[latIndicies(i), latIndicies(i)],[elevations(i), elevations(i) + pointLableHeight], 'LineWidth', 4, 'Color', 'red');
+if boollabel
+    scatter3(longIndicies, latIndicies, elevations + pointLableHeight, 150, symbol, color, 'filled');
+    for i = 1:length(longIndicies)
+        if isnan(label{i})
+            vislabel = [num2str(elevations(i),4) 'm'];
+        else
+            vislabel = [label(i) [num2str(elevations(i),4) 'm']];
+        end
+        text(longIndicies(i) + labelOffset, latIndicies(i), elevations(i) + 15, vislabel , 'fontsize', 14, 'color', 'black', 'BackgroundColor', 'white', 'EdgeColor', 'black');
+        line([longIndicies(i), longIndicies(i)],[latIndicies(i), latIndicies(i)],[elevations(i), elevations(i) + pointLableHeight], 'LineWidth', 4, 'Color', color);
+    end
 end
 end

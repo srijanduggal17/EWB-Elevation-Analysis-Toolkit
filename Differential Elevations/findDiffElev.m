@@ -1,12 +1,17 @@
-function [sortedElevationData] = findDiffElev(elevationData)
+function [sortedElevationData] = findDiffElev(elevationData, refZero)
 % Label each column of the CSV
 longData  = elevationData(:,1);
 latData = elevationData(:,2);
 elevData = elevationData(:,3);
 
+sprintf('Data Separated'); 
+
 % Scale the dimensions of the plot to a square
-lowestElev = min(elevData);
+% lowestElev = min(elevData)
+lowestElev = refZero;
 highestElev = max(elevData);
+
+sprintf('Min and Max found'); 
 
 elevData = elevData - lowestElev;
 
@@ -16,6 +21,8 @@ axisHigh = max(elevData);
 latDiff = range(latData);
 longDiff = range(longData);
 
+sprintf('Axis Made'); 
+
 latHalf = min(latData) + .5 .* latDiff;
 longHalf = min(longData) + .5 .* longDiff;
 
@@ -23,6 +30,8 @@ scaleValue = max([longDiff, latDiff]);
 
 latDim = [(latHalf - (.5 .* scaleValue)) (latHalf + (.5 .* scaleValue))];
 longDim = [(longHalf - (.5 .* scaleValue)) (longHalf + (.5 .* scaleValue))];
+
+sprintf('Scale Made'); 
 
 
 % Gets the axis values for lat and long in degrees and meters from edge of
@@ -38,20 +47,33 @@ longValMeters = (pi./180).*longVal.*cosd(averageLat).*6371.*1000;
 latValMeters = latValMeters - min(latValMeters);
 longValMeters = longValMeters - min(longValMeters);
 
+sprintf('Something Happens'); 
+
 % Creates a table of undefined elements for our region
 sortedElevationData = NaN(length(latVal),length(longVal));
 
-latinmin = 2.315;
-latinmax = 2.323;
-longinmin = 33.245;
-longinmax = 33.253;
+sprintf('Elevation Sorted'); 
 
-t4lat = 2.3196;
-t4long = 33.2488;
-label = 'T4';
+% latinmin = 2.315;
+% latinmax = 2.323;
+% longinmin = 33.245;
+% longinmax = 33.253;
+
+latinmin = min(latVal);
+latinmax = max(latVal);
+longinmin = min(longVal);
+longinmax = max(longVal);
+
+sprintf('Min Max found'); 
+
+% t4lat = 2.3196;
+% t4long = 33.2488;
+% label = 'T4';
 
 latmask = latVal >= latinmin & latVal <= latinmax;
 longmask = longVal >= longinmin & longVal <= longinmax;
+
+sprintf('Mask Created'); 
 
 % Populates the table with the elevation data
 for latCount = 1:length(latVal)
@@ -63,25 +85,36 @@ for latCount = 1:length(latVal)
     end
 end
 
+sprintf('Loop Section Completed'); 
+
+% [nearestlatind, d] = dsearchn(latVal,t4lat);
+% [nearestlongind, e] = dsearchn(longVal, t4long);
+% nearestelevation = sortedElevationData(nearestlatind, nearestlongind);
+
 % Surface plot in degrees
+pointLableHeight = 15; %Distance from point to label
+
 figure(101)
 surf(longVal(longmask),latVal(latmask),sortedElevationData(latmask, longmask))
 figure(gcf)
 xlim([min(longVal(longmask)) max(longVal(longmask))])
 ylim([min(latVal(latmask)) max(latVal(latmask))])
-zlim([(axisLow) (axisHigh)])
+zlim([(axisLow) (axisHigh + pointLableHeight)])
 xlabel('Longitude (deg)')
 ylabel('Latitude (deg)')
 zlabel('Elevation (meters)')
 
-nearestlatind = dsearchn(latVal,t4lat);
-nearestlongind = dsearchn(longVal, t4long);
-nearestelevation = sortedElevationData(nearestlatind, nearestlongind);
+sprintf('Figure ');
+
+% view(0,90);
+% axis equal;
+shading interp;
+colorbar;
 
 hold on
-t4 = scatter3(t4long, t4lat, nearestelevation, 100, 'red', 'filled');
-text(t4long, t4lat, nearestelevation + 15, label);
-plot3([t4long, t4long],[t4lat, t4lat],[nearestelevation, nearestelevation + 15]);
+choice = 'DMS';
+plotTap('../Plots and Data/MajorPoints.xlsx', latVal, longVal, sortedElevationData, choice, true, 'blue', 'o');
+% plotPoints('newpoints.xlsx', latVal, longVal, sortedElevationData, choice, true, 'red', 'o');
 hold off
 
 % % Surface plot in meters
@@ -93,6 +126,13 @@ hold off
 % ylabel('Longitude (meters)')
 % zlabel('Elevation (meters)')
 % 
+% colorbar
+% 
+% hold on
+% choice = 'DMS';
+% [latIndicies, longIndicies, elevations] = plotTap(latVal, longVal, sortedElevationData, choice);
+% hold off
+
 % % Contour map in degrees
 % figure(103)
 % contour3(longVal,latVal,sortedElevationData,20)
