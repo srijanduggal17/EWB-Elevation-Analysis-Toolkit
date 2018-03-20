@@ -1,17 +1,18 @@
 function [sortedElevationData] = findDiffElev(elevationData, refZero)
+sprintf('It begins')
 % Label each column of the CSV
 longData  = elevationData(:,1);
 latData = elevationData(:,2);
 elevData = elevationData(:,3);
 
-sprintf('Data Separated'); 
+sprintf('Data Separated')
 
 % Scale the dimensions of the plot to a square
 % lowestElev = min(elevData)
 lowestElev = refZero;
 highestElev = max(elevData);
 
-sprintf('Min and Max found'); 
+sprintf('Min and Max found')
 
 elevData = elevData - lowestElev;
 
@@ -21,7 +22,7 @@ axisHigh = max(elevData);
 latDiff = range(latData);
 longDiff = range(longData);
 
-sprintf('Axis Made'); 
+sprintf('Axis Made')
 
 latHalf = min(latData) + .5 .* latDiff;
 longHalf = min(longData) + .5 .* longDiff;
@@ -31,7 +32,7 @@ scaleValue = max([longDiff, latDiff]);
 latDim = [(latHalf - (.5 .* scaleValue)) (latHalf + (.5 .* scaleValue))];
 longDim = [(longHalf - (.5 .* scaleValue)) (longHalf + (.5 .* scaleValue))];
 
-sprintf('Scale Made'); 
+sprintf('Scale Made')
 
 
 % Gets the axis values for lat and long in degrees and meters from edge of
@@ -47,12 +48,12 @@ longValMeters = (pi./180).*longVal.*cosd(averageLat).*6371.*1000;
 latValMeters = latValMeters - min(latValMeters);
 longValMeters = longValMeters - min(longValMeters);
 
-sprintf('Something Happens'); 
+sprintf('Something Happens') 
 
 % Creates a table of undefined elements for our region
 sortedElevationData = NaN(length(latVal),length(longVal));
 
-sprintf('Elevation Sorted'); 
+sprintf('Elevation Sorted') 
 
 % latinmin = 2.315;
 % latinmax = 2.323;
@@ -64,7 +65,7 @@ latinmax = max(latVal);
 longinmin = min(longVal);
 longinmax = max(longVal);
 
-sprintf('Min Max found'); 
+sprintf('Min Max found') 
 
 % t4lat = 2.3196;
 % t4long = 33.2488;
@@ -73,19 +74,23 @@ sprintf('Min Max found');
 latmask = latVal >= latinmin & latVal <= latinmax;
 longmask = longVal >= longinmin & longVal <= longinmax;
 
-sprintf('Mask Created'); 
+sprintf('Mask Created')
 
 % Populates the table with the elevation data
-for latCount = 1:length(latVal)
-    for longCount = 1:length(longVal)
+lengthLatVal = length(latVal);
+lengthLongVal = length(longVal);
+for latCount = 1:lengthLatVal
+    for longCount = 1:lengthLongVal
         locInd = [latData == latVal(latCount) & longData == longVal(longCount)];
         if sum(locInd) > 0
             sortedElevationData(latCount, longCount) = elevData(locInd);
         end
     end
+    percentage = (latCount ./ lengthLatVal) * 100;
+    sprintf('Percentage: %.2f', percentage)
 end
 
-sprintf('Loop Section Completed'); 
+sprintf('Loop Section Completed')
 
 % [nearestlatind, d] = dsearchn(latVal,t4lat);
 % [nearestlongind, e] = dsearchn(longVal, t4long);
@@ -104,7 +109,7 @@ xlabel('Longitude (deg)')
 ylabel('Latitude (deg)')
 zlabel('Elevation (meters)')
 
-sprintf('Figure ');
+sprintf('Figure ')
 
 % view(0,90);
 % axis equal;
@@ -114,7 +119,7 @@ colorbar;
 hold on
 choice = 'DMS';
 plotTap('../Plots and Data/MajorPoints.xlsx', latVal, longVal, sortedElevationData, choice, true, 'blue', 'o');
-% plotPoints('newpoints.xlsx', latVal, longVal, sortedElevationData, choice, true, 'red', 'o');
+plotPoints('PipelinePoints.xlsx', latVal, longVal, sortedElevationData, choice, true, 'red', 'o');
 hold off
 
 % % Surface plot in meters
