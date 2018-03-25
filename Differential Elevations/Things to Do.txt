@@ -1,0 +1,2 @@
+findDiffElev
+- only loop over region defined by mask

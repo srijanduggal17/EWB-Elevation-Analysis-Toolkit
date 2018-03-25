@@ -1,21 +1,22 @@
 function [] = plotTap(filename, latArr, longArr, sortedElevationData, choice, boollabel, color, symbol)
 figure(gcf)
 
-% hold on
-
+% Get raw data from excel file
 [~,~,raw] = xlsread(filename);
 [rows, ~] = size(raw);
 
+% Find user's choice of input format
 choice = upper(choice);
 
+% Create empty arrays for later use
 latIndicies = [];
 longIndicies = [];
 elevations = [];
 label = {};
 
+% Declare constants
 pointLableHeight = 15;
 labelOffset = .00025;
-
 
 switch choice
     case 'DD'
