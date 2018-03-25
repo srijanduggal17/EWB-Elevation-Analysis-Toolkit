@@ -1,2 +1,7 @@
 findDiffElev
 - only loop over region defined by mask
+- memoization
+- decimal degrees input for plotTap
+- find best point to use as reference for data for plotPoints
+    - Some sort of way to plot outliers
+    - T-test with data and compare residual
