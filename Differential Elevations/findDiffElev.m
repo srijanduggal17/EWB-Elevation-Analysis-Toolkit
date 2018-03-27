@@ -112,7 +112,7 @@ colorbar;
 hold on
 choice = 'DMS';
 plotTap('../Plots and Data/MajorPoints.xlsx', latVal, longVal, sortedElevationData, choice, true, 'blue', 'o');
-% plotPoints('PipelinePoints.xlsx', latVal, longVal, sortedElevationData, choice, true, 'red', 'o');
+plotPoints('../Plots and Data/Data Files/InCountryElev.xlsx', latVal, longVal, sortedElevationData, choice, true, 'red', 'o');
 hold off
 end
 
